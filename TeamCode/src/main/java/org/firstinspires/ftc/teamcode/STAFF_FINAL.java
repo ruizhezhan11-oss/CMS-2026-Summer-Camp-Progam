@@ -7,23 +7,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;//計時器
 //==================================================================================//
 @TeleOp(name = "STAFF_FINAL")
 public class STAFF_FINAL extends LinearOpMode {
-private void init_hardware(){
-     DcMotor BL, BR, FL, FR;
-     DcMotor intake, intake2;
-     DcMotorEx shooter, shooter2;
-}
-     DcMotor BL;
-     DcMotor BR;
-     DcMotor FL;
-     DcMotor FR;
-     DcMotor intake;
+    private void init_hardware(){
+        DcMotor BL, BR, FL, FR;
+        DcMotor intake, intake2;
+        DcMotorEx shooter, shooter2;
+    }
+    DcMotor BL;
+    DcMotor BR;
+    DcMotor FL;
+    DcMotor FR;
+    DcMotor intake;
     DcMotor intake2;
-     DcMotorEx shooter;
-     DcMotorEx shooter2;
+    DcMotorEx shooter;
+    DcMotorEx shooter2;
 
 
     //以下三個變數常用
-    double targetRPM = 3750;//Shooter固定參數
+    double targetRPM = 3000;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
     double intake1Seconds = 4;
@@ -64,6 +64,7 @@ private void init_hardware(){
 
         //吸吐球系統轉向
         intake.setDirection(DcMotor.Direction.FORWARD);
+        intake2.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotor.Direction.FORWARD);
         shooter2.setDirection(DcMotor.Direction.REVERSE);
 
@@ -84,6 +85,7 @@ private void init_hardware(){
             //======無限迴圈======\\
             while (opModeIsActive()) {
                 // While迴圈
+                //全向移動
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
                 FR.setPower((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x);
                 BL.setPower((-gamepad1.left_stick_y - gamepad1.left_stick_x) + gamepad1.right_stick_x);
@@ -92,10 +94,14 @@ private void init_hardware(){
                 //自動吸球射球 (仿製 程式King 【team_1_final.java】)
                 //一勞永逸，所有按鈕功能都在這
                 //開關
-                if (gamepad1.rightBumperWasPressed()) {
-                    autoFireOn = !autoFireOn;}
-                //偵測過程中是否按下Trigger
-
+                if (gamepad1.aWasPressed()) {
+                    if (autoFireOn) {
+                        autoFireOn = false;   // 已經在連招中，再按一次直接關
+                    } else {
+                        autoFireOn = true;    // 還沒開始，按下去啟動
+                        spinUpTimer.reset();  // 重置計時器
+                    }
+                }
 
                 if(autoFireOn){
                     //自動程序
@@ -104,12 +110,14 @@ private void init_hardware(){
                     intake2.setPower(1);
                     //
                     if (spinUpTimer.seconds() >= intake1Seconds) {
+                        intake.setPower(0);
+                        intake2.setPower(1);
                         double ticksPerSecond = (targetRPM / 60.0) * CPR;
                         shooter.setVelocity(ticksPerSecond);
                         shooter2.setVelocity(ticksPerSecond);}
 
 
-                 } else{
+                } else{
                     //Intake
                     if (gamepad1.a) {
                         intake.setPower(1);
@@ -145,6 +153,7 @@ private void init_hardware(){
 
                     }else{
                         shooter2.setVelocity(0);
+                        shooter.setVelocity(0);
                     }
                     //按X強制停止
                     if (gamepad1.x) {
@@ -152,7 +161,9 @@ private void init_hardware(){
                         stopAllMotors();
 
                     }
-                 }
+                }
+                updateTelemetry();
+                telemetry.update();
 
             }
 
