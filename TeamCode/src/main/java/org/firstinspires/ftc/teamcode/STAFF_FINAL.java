@@ -24,7 +24,7 @@ public class STAFF_FINAL extends LinearOpMode {
 
 
     //以下三個變數常用
-    double targetRPM = 6000;//Shooter固定參數
+    double targetRPM = 3070;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
     double intake1Seconds = 4;
@@ -87,9 +87,9 @@ public class STAFF_FINAL extends LinearOpMode {
             while (opModeIsActive()) {
                 double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
                 double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
-                telemetry.addLine("Shooter一律進戰模式:3750轉");
-                telemetry.addData("Shooter1即時轉速", shooter1RPM);
-                telemetry.addData("Shooter2及時轉速", shooter2RPM);
+                telemetry.addLine("Shooter一律進戰模式:3070轉");
+                telemetry.addData("Shooter1即時轉速", shooter1RPM +"RPM");
+                telemetry.addData("Shooter2及時轉速", shooter2RPM +"RPM");
                 telemetry.addData("自動連招模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
                 telemetry.addLine("使用方法：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
