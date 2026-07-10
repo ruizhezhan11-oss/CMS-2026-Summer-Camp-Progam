@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name = "STAFF_JAVA")
+@TeleOp(name = "STAFF_OpMode")
 public class STAFF extends LinearOpMode {
 
 
@@ -18,7 +18,7 @@ public class STAFF extends LinearOpMode {
     private DcMotorEx shooter;
     private DcMotorEx shooter2;
     //以下三個變數常用
-    double targetRPM = 3800;//Shooter固定參數
+    double targetRPM = 3750;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
 
@@ -78,6 +78,7 @@ public class STAFF extends LinearOpMode {
         //Press "START"
         if (opModeIsActive()) {
             // 一次性程式
+            //======無限迴圈======\\
             while (opModeIsActive()) {
                 // While迴圈
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
@@ -90,8 +91,11 @@ public class STAFF extends LinearOpMode {
                 //開關
                 if (gamepad1.rightBumperWasPressed()) {
                     autoFireOn = !autoFireOn;}
+                //偵測過程中是否按下Trigger
+
 
                 if(autoFireOn){
+
                     double ticksPerSecond = (targetRPM/ 60.0) * CPR;
                     shooter2.setVelocity(ticksPerSecond);
                     shooter.setVelocity(ticksPerSecond);
@@ -139,24 +143,21 @@ public class STAFF extends LinearOpMode {
                     }else{
                         shooter2.setVelocity(0);
                     }
+                    //按X強制停止
+                    if (gamepad1.x) {
+                       autoFireOn = false;
+                       stopAllMotors();
 
-
+                    }
                 }
 
-                //按X強制停止
-                if (gamepad1.x) {
-                    autoFireOn = false;
-                    shooter.setVelocity(0);
-                    shooter2.setVelocity(0);
-                    intake.setPower(0);
-                    intake2.setPower(0);
 
-                }
-                double Shooter2RPM=shooter2.getVelocity();
-                double Shooter1RPM=shooter.getVelocity();
 
-                telemetry.addData("Shooter1即時轉速",Shooter1RPM);
-                telemetry.addData("Shooter2及時轉速",Shooter2RPM);
+                double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
+                double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
+                telemetry.addLine("Shooter一律進戰模式:3750轉");
+                telemetry.addData("Shooter1即時轉速",shooter1RPM);
+                telemetry.addData("Shooter2及時轉速",shooter2RPM);
                 telemetry.addData("自動連招模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
                 }
 
