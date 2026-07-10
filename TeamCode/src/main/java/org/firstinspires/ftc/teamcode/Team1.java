@@ -94,22 +94,7 @@ public class Team1 extends LinearOpMode {
                 BR.setPower((-gamepad1.left_stick_y + gamepad1.left_stick_x) - gamepad1.right_stick_x);
 
 
-                //手把程式
-                if (gamepad1.b) {
-                    intake.setPower(1);
-                } else {
-                    intake.setPower(0);
 
-                }
-                if (gamepad1.y) {
-                    double ticksPerSecond = (targetRPM / 60.0) * CPR;
-                    shooter.setVelocity(ticksPerSecond);
-                    shooter2.setVelocity(ticksPerSecond);
-
-                }else {
-                    shooter2.setVelocity(0);
-                    shooter.setVelocity(0);
-                }
 
                 if (gamepad1.aWasPressed()) {
                     if (autoFireOn) {
@@ -129,21 +114,37 @@ public class Team1 extends LinearOpMode {
                     shooter.setVelocity(ticksPerSecond);
                     shooter2.setVelocity(ticksPerSecond);
                 } else{
-                    intake.setPower(0);
-                    shooter.setVelocity(0);
-                    shooter2.setVelocity(0);
-                }
-
                     //Intake
                     if (gamepad1.a) {
                         intake.setPower(1);
                     } else {
                         intake.setPower(0);
                     }
+                    //手把程式
+                    if (gamepad1.b) {
+                        intake.setPower(1);
+                    } else {
+                        intake.setPower(0);
 
+                    }
+                    if (gamepad1.y) {
+                        double ticksPerSecond = (targetRPM / 60.0) * CPR;
+                        shooter.setVelocity(ticksPerSecond);
+                        shooter2.setVelocity(ticksPerSecond);
+
+                    }else {
+                        shooter2.setVelocity(0);
+                        shooter.setVelocity(0);
+                    }
                     if (gamepad1.x) {
-                    stopAllMotors();
+                        stopAllMotors();
+                    }
+
                 }
+
+
+
+
 
                 }
 
