@@ -3,6 +3,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;//計時器
 //==================================================================================//
 @TeleOp(name = "STAFF_FINAL")
@@ -23,7 +24,7 @@ public class STAFF_FINAL extends LinearOpMode {
 
 
     //以下三個變數常用
-    double targetRPM = 3000;//Shooter固定參數
+    double targetRPM = 6000;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
     double intake1Seconds = 4;
@@ -65,7 +66,7 @@ public class STAFF_FINAL extends LinearOpMode {
         //吸吐球系統轉向
         intake.setDirection(DcMotor.Direction.FORWARD);
         intake2.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setDirection(DcMotor.Direction.FORWARD);
+        shooter.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setDirection(DcMotor.Direction.REVERSE);
 
         //設定模式
@@ -84,6 +85,14 @@ public class STAFF_FINAL extends LinearOpMode {
             telemetry.addLine("成功啟動OpMode");
             //======無限迴圈======\\
             while (opModeIsActive()) {
+                double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
+                double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
+                telemetry.addLine("Shooter一律進戰模式:3750轉");
+                telemetry.addData("Shooter1即時轉速", shooter1RPM);
+                telemetry.addData("Shooter2及時轉速", shooter2RPM);
+                telemetry.addData("自動連招模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
+                telemetry.addLine("使用方法：");
+                telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
                 // While迴圈
                 //全向移動
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
@@ -94,7 +103,7 @@ public class STAFF_FINAL extends LinearOpMode {
                 //自動吸球射球 (仿製 程式King 【team_1_final.java】)
                 //一勞永逸，所有按鈕功能都在這
                 //開關
-                if (gamepad1.aWasPressed()) {
+                if (gamepad1.rightBumperWasPressed()) {
                     if (autoFireOn) {
                         autoFireOn = false;   // 已經在連招中，再按一次直接關
                     } else {
@@ -121,8 +130,10 @@ public class STAFF_FINAL extends LinearOpMode {
                     //Intake
                     if (gamepad1.a) {
                         intake.setPower(1);
+                        intake2.setPower(1);
                     } else {
                         intake.setPower(0);
+                        intake2.setPower(0);
                     }
 
                     //Intake2
@@ -159,25 +170,20 @@ public class STAFF_FINAL extends LinearOpMode {
                     if (gamepad1.x) {
                         autoFireOn = false;
                         stopAllMotors();
+                        telemetry.addLine("已強制停止");
 
                     }
                 }
-                updateTelemetry();
+
                 telemetry.update();
 
             }
 
 
-        }
+
+            }
     }
-    private void updateTelemetry(){
-        double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
-        double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
-        telemetry.addLine("Shooter一律進戰模式:3750轉");
-        telemetry.addData("Shooter1即時轉速", shooter1RPM);
-        telemetry.addData("Shooter2及時轉速", shooter2RPM);
-        telemetry.addData("自動連招模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
-    }
+
 
 
 
