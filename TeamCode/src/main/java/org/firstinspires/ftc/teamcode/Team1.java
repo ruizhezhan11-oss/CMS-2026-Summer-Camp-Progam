@@ -141,21 +141,9 @@ public class Team1 extends LinearOpMode {
                     }
 
                 }
-
-
-
-
-
-                }
-
-
-
-
-
-
-
             }
         }
+    }
     /// Stop all motors
     private void stopAllMotors () {
         BL.setPower(0);
