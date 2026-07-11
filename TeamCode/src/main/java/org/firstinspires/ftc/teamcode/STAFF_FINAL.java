@@ -6,28 +6,28 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;//計時器
 //==================================================================================//
-@TeleOp(name = "STAFF_FINAL")
+@TeleOp(name = "STAFF_TeleOp")
 public class STAFF_FINAL extends LinearOpMode {
     private void init_hardware(){
         DcMotor BL, BR, FL, FR;
         DcMotor intake, intake2;
         DcMotorEx shooter, shooter2;
     }
-    DcMotor BL;
-    DcMotor BR;
-    DcMotor FL;
-    DcMotor FR;
-    DcMotor intake;
-    DcMotor intake2;
-    DcMotorEx shooter;
-    DcMotorEx shooter2;
+    private DcMotor BL;
+    private DcMotor BR;
+    private DcMotor FL;
+    private DcMotor FR;
+    private DcMotor intake;
+    private DcMotor intake2;
+    private DcMotorEx shooter;
+    private DcMotorEx shooter2;
 
 
-    //以下三個變數常用
+    //以下變數常用
     double targetRPM = 3070;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
-    double intake1Seconds = 4;
+    double intake1Seconds = 4;//收集球的秒數
     ElapsedTime spinUpTimer = new ElapsedTime();//自動程序計時Timer
 
     /**
@@ -39,6 +39,7 @@ public class STAFF_FINAL extends LinearOpMode {
      */
     //配置:詳見工筆
     //這程式應該沒人會來看，除了驗收的學長
+    //萬駿哥說這是簡單的程式
     @Override
     public void runOpMode() {
         //hardwareMap.get
@@ -82,16 +83,18 @@ public class STAFF_FINAL extends LinearOpMode {
         //Press "START"
         if (opModeIsActive()) {
             // 一次性程式
-            telemetry.addLine("成功啟動OpMode");
+
             //======無限迴圈======\\
             while (opModeIsActive()) {
+                //Driver Hub介面顯示
+                telemetry.addLine("成功啟動OpMode");
                 double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
                 double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
-                telemetry.addLine("Shooter一律進戰模式:3070轉");
+                telemetry.addData("Shooter目標轉速：", targetRPM);
                 telemetry.addData("Shooter1即時轉速", shooter1RPM +"RPM");
                 telemetry.addData("Shooter2及時轉速", shooter2RPM +"RPM");
                 telemetry.addData("自動連招模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
-                telemetry.addLine("使用方法：");
+                telemetry.addLine("使用方法如下：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
                 // While迴圈
                 //全向移動
@@ -102,7 +105,7 @@ public class STAFF_FINAL extends LinearOpMode {
 
                 //自動吸球射球 (仿製 程式King 【team_1_final.java】)
                 //一勞永逸，所有按鈕功能都在這
-                //開關
+                //程序開關
                 if (gamepad1.rightBumperWasPressed()) {
                     if (autoFireOn) {
                         autoFireOn = false;   // 已經在連招中，再按一次直接關
@@ -118,7 +121,7 @@ public class STAFF_FINAL extends LinearOpMode {
                     intake.setPower(1);
                     intake2.setPower(1);
                     //
-                    if (spinUpTimer.seconds() >= intake1Seconds) {
+                    if (spinUpTimer.seconds() < intake1Seconds) {//等待秒數
                         intake.setPower(0);
                         intake2.setPower(1);
                         double ticksPerSecond = (targetRPM / 60.0) * CPR;
@@ -127,6 +130,7 @@ public class STAFF_FINAL extends LinearOpMode {
 
 
                 } else{
+
                     //Intake
                     if (gamepad1.a) {
                         intake.setPower(1);
@@ -167,11 +171,18 @@ public class STAFF_FINAL extends LinearOpMode {
                         shooter.setVelocity(0);
                     }
                     //按X強制停止
-                    if (gamepad1.x) {
+                    if (gamepad1.xWasPressed()) {
                         autoFireOn = false;
                         stopAllMotors();
-                        telemetry.addLine("已強制停止");
 
+
+                    }
+                    //強制停止狀態
+                    boolean XPressed = gamepad1.x;
+                    if(XPressed){
+                        telemetry.addLine("已強制停止");
+                    }else{
+                        telemetry.addLine("正常運轉中");
                     }
                 }
 
