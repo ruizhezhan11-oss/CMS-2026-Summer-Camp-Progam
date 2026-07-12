@@ -28,6 +28,7 @@ public class STAFF_FINAL extends LinearOpMode {
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
     double intake1Seconds = 4;//收集球的秒數
+    double shooterAutobreak=5;
     ElapsedTime spinUpTimer = new ElapsedTime();//自動程序計時Timer
 
     /**
@@ -127,6 +128,13 @@ public class STAFF_FINAL extends LinearOpMode {
                         double ticksPerSecond = (targetRPM / 60.0) * CPR;
                         shooter.setVelocity(ticksPerSecond);
                         shooter2.setVelocity(ticksPerSecond);}
+                    if(spinUpTimer.seconds() > shooterAutobreak){
+                        intake.setPower(0);
+                        intake2.setPower(0);
+                        shooter.setVelocity(0);
+                        shooter2.setVelocity(0);
+                        autoFireOn = false;
+                    }
 
 
                 } else{
