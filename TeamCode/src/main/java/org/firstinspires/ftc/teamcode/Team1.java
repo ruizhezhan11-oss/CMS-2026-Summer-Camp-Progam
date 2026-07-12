@@ -120,13 +120,7 @@ public class Team1 extends LinearOpMode {
                     } else {
                         intake.setPower(0);
                     }
-                    //手把程式
-                    if (gamepad1.b) {
-                        intake.setPower(1);
-                    } else {
-                        intake.setPower(0);
 
-                    }
                     if (gamepad1.y) {
                         double ticksPerSecond = (targetRPM / 60.0) * CPR;
                         shooter.setVelocity(ticksPerSecond);
@@ -136,7 +130,7 @@ public class Team1 extends LinearOpMode {
                         shooter2.setVelocity(0);
                         shooter.setVelocity(0);
                     }
-                    if (gamepad1.x) {
+                    if (gamepad1.xWasPressed()) {
                         stopAllMotors();
                     }
                     telemetry.update();
