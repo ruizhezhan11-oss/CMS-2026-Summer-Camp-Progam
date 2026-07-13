@@ -21,13 +21,10 @@ public class Team1 extends LinearOpMode {
     DcMotor intake;
     DcMotorEx shooter;
     DcMotorEx shooter2;
+    double shooterPower = 0.4;
 
-
-    //以下兩個變數常用
-    double targetRPM = 2750;//Shooter固定參數
-    double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
-    double intake1Seconds = 4;
+    boolean intake1On = false;
     ElapsedTime spinUpTimer = new ElapsedTime();//自動程序計時Timer
 
     /**
@@ -64,7 +61,7 @@ public class Team1 extends LinearOpMode {
         //吸吐球系統轉向
         intake.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotor.Direction.REVERSE);
-        shooter2.setDirection(DcMotor.Direction.FORWARD);
+        shooter2.setDirection(DcMotor.Direction.REVERSE);
 
         //設定模式
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -72,8 +69,8 @@ public class Team1 extends LinearOpMode {
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
-        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
+        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//請加裝Encoder
+        shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//請加裝Encoder
         waitForStart();//Init Finish
         //Press "START"
         if (opModeIsActive()) {
@@ -81,13 +78,6 @@ public class Team1 extends LinearOpMode {
 
             //======無限迴圈======\\
             while (opModeIsActive()) {
-                double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
-                double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
-                telemetry.addLine("成功啟動OpMode");
-                telemetry.addData("Shooter目標",targetRPM +"轉");
-                telemetry.addData("Shooter1即時轉速", shooter1RPM +"RPM");
-                telemetry.addData("Shooter2及時轉速", shooter2RPM +"RPM");
-
                 // While迴圈
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
                 FR.setPower((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x);
@@ -97,7 +87,7 @@ public class Team1 extends LinearOpMode {
 
 
 
-                if (gamepad1.aWasPressed()) {
+                if (gamepad1.bWasPressed()) {
                     if (autoFireOn) {
                         autoFireOn = false;   // 已經在連招中，再按一次直接關
                     } else {
@@ -105,15 +95,28 @@ public class Team1 extends LinearOpMode {
                         spinUpTimer.reset();  // 重置計時器
                     }
                 }
+                if(gamepad1.rightBumperWasPressed()){
+                    if(intake1On){
+                        intake1On = false;
+                    }else{
+                        intake1On = true;
+                        spinUpTimer.reset();
+                    }
+                }
 
                 if(autoFireOn){
                     //自動程序
                     intake.setPower(1);
-
-                    double ticksPerSecond = (targetRPM / 60.0) * CPR;
-                    shooter.setVelocity(ticksPerSecond);
-                    shooter2.setVelocity(ticksPerSecond);
+                    shooter.setPower(shooterPower);
+                    shooter2.setPower(shooterPower);
                 } else{
+                    //吐球
+                    if(intake1On){
+                        intake.setDirection(DcMotor.Direction.REVERSE);
+                        intake.setPower(1);
+                    }else{
+                        intake.setDirection(DcMotor.Direction.FORWARD);
+                    }
                     //Intake
                     if (gamepad1.a) {
                         intake.setPower(1);
@@ -122,13 +125,11 @@ public class Team1 extends LinearOpMode {
                     }
 
                     if (gamepad1.y) {
-                        double ticksPerSecond = (targetRPM / 60.0) * CPR;
-                        shooter.setVelocity(ticksPerSecond);
-                        shooter2.setVelocity(ticksPerSecond);
-
+                        shooter.setPower(shooterPower);
+                        shooter2.setPower(shooterPower);
                     }else {
-                        shooter2.setVelocity(0);
-                        shooter.setVelocity(0);
+                        shooter2.setPower(0);
+                        shooter.setPower(0);
                     }
                     if (gamepad1.xWasPressed()) {
                         stopAllMotors();
