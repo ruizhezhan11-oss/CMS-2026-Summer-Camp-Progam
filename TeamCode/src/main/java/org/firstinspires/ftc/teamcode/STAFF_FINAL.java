@@ -6,11 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 //==================================================================================//
 @TeleOp(name = "STAFF_FINAL")
 public class STAFF_FINAL extends LinearOpMode {
-    private void init_hardware(){
-        DcMotor BL, BR, FL, FR;
-        DcMotor intake, intake2;
-        DcMotorEx shooter, shooter2;
-    }
     private DcMotor BL;
     private DcMotor BR;
     private DcMotor FL;
@@ -19,6 +14,11 @@ public class STAFF_FINAL extends LinearOpMode {
     private DcMotor intake2;
     private DcMotorEx shooter;
     private DcMotorEx shooter2;
+    private void init_hardware(){
+        DcMotor BL, BR, FL, FR;
+        DcMotor intake, intake2;
+        DcMotorEx shooter, shooter2;
+    }
 
 
     //以下變數常用
