@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-@Autonomous(name = "STAFF_AUTOTIME")
+@Autonomous(name = "STAFF_AUTOTIME")//實驗性質
 public class STAFF_AUTOTIME extends LinearOpMode{
     private enum State {
         DRIVE_FORWARD,DRIVE_REVERSE,STOP,RUN_RIGHTSIDE,RUN_LEFTSIDE,
