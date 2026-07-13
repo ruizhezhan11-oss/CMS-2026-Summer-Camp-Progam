@@ -3,6 +3,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 //==================================================================================//
 @TeleOp(name = "STAFF_FINAL")
 public class STAFF_FINAL extends LinearOpMode {
@@ -22,10 +24,16 @@ public class STAFF_FINAL extends LinearOpMode {
 
 
     //以下變數常用
-    double targetRPM = 3070;//Shooter固定參數
+    double targetRPM = 3360;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
 
+    public double applyDeadzone(double value, double deadzone) {
+        if (Math.abs(value) < deadzone) {
+            return 0.0;
+        }
+        return value;
+    }
 
 
     /**
@@ -64,7 +72,7 @@ public class STAFF_FINAL extends LinearOpMode {
 
         //吸吐球系統轉向
         intake.setDirection(DcMotor.Direction.FORWARD);
-        intake2.setDirection(DcMotor.Direction.FORWARD);
+        intake2.setDirection(DcMotor.Direction.REVERSE);
         shooter.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setDirection(DcMotor.Direction.REVERSE);
 
@@ -85,15 +93,22 @@ public class STAFF_FINAL extends LinearOpMode {
             //======無限迴圈======\\
             while (opModeIsActive()) {
                 //Driver Hub介面顯示
-                telemetry.addLine("成功啟動OpMode");
+                telemetry.addLine("✅成功啟動OpMode");
+                telemetry.addLine("請注意網路為 FTC-QP3w");
                 double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
                 double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
-                telemetry.addData("Shooter目標轉速：", targetRPM);
+                telemetry.addData("🎯Shooter目標轉速：", targetRPM +"RPM");
                 telemetry.addData("Shooter1即時轉速", shooter1RPM +"RPM");
-                telemetry.addData("Shooter2及時轉速", shooter2RPM +"RPM");
+                telemetry.addData("Shooter2及時轉速", -shooter2RPM +"RPM");
                 telemetry.addData("全馬達模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
                 telemetry.addLine("使用方法如下：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
+                //AI協助
+                double DEADZONE = 0.05;
+
+                double y  = applyDeadzone(-gamepad1.left_stick_y, DEADZONE);  // Y軸方向相反，記得加負號
+                double x  = applyDeadzone(gamepad1.left_stick_x, DEADZONE);
+                double rx = applyDeadzone(gamepad1.right_stick_x, DEADZONE);
                 // While迴圈
                 //全向移動
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
@@ -143,7 +158,7 @@ public class STAFF_FINAL extends LinearOpMode {
                         double ticksPerSecond = (targetRPM / 60.0) * CPR;
                         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         shooter.setVelocity(ticksPerSecond);
-                        double externalGearRatio = 2.0; //無減速箱
+
 
 
                     }else {
