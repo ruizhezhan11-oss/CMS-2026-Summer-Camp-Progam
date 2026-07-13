@@ -24,7 +24,6 @@ public class Team1 extends LinearOpMode {
     double shooterPower = 0.4;
 
     boolean autoFireOn = false;//自動需要
-    boolean intake1On = false;
     ElapsedTime spinUpTimer = new ElapsedTime();//自動程序計時Timer
 
     /**
@@ -95,14 +94,7 @@ public class Team1 extends LinearOpMode {
                         spinUpTimer.reset();  // 重置計時器
                     }
                 }
-                if(gamepad1.rightBumperWasPressed()){
-                    if(intake1On){
-                        intake1On = false;
-                    }else{
-                        intake1On = true;
-                        spinUpTimer.reset();
-                    }
-                }
+
 
                 if(autoFireOn){
                     //自動程序
@@ -111,7 +103,7 @@ public class Team1 extends LinearOpMode {
                     shooter2.setPower(shooterPower);
                 } else{
                     //吐球
-                    if(intake1On){
+                    if(gamepad1.right_bumper){
                         intake.setDirection(DcMotor.Direction.REVERSE);
                         intake.setPower(1);
                     }else{
