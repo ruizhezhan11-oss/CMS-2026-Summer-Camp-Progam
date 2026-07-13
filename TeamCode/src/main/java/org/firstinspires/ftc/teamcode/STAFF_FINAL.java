@@ -3,10 +3,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;//計時器
 //==================================================================================//
-@TeleOp(name = "STAFF_TeleOp")
+@TeleOp(name = "STAFF_FINAL")
 public class STAFF_FINAL extends LinearOpMode {
     private void init_hardware(){
         DcMotor BL, BR, FL, FR;
@@ -150,7 +148,6 @@ public class STAFF_FINAL extends LinearOpMode {
 
                     }else {
                         shooter.setVelocity(0);
-
                     }
 
                     //shooter2
@@ -163,15 +160,18 @@ public class STAFF_FINAL extends LinearOpMode {
                         shooter2.setVelocity(0);
                         shooter.setVelocity(0);
                     }
+                    boolean XPressed = gamepad1.xWasPressed();
                     //按X強制停止
                     if (gamepad1.xWasPressed()) {
                         autoFireOn = false;
                         stopAllMotors();
 
 
+                    }else{
+                        XPressed=false;
                     }
                     //強制停止狀態
-                    boolean XPressed = gamepad1.x;
+
                     if(XPressed){
                         telemetry.addLine("已強制停止");
                     }else{
@@ -183,10 +183,6 @@ public class STAFF_FINAL extends LinearOpMode {
             }
         }
     }
-
-
-
-
     /// Stop all motors
     private void stopAllMotors() {
         BL.setPower(0);
@@ -198,4 +194,6 @@ public class STAFF_FINAL extends LinearOpMode {
         shooter.setVelocity(0);
         shooter2.setVelocity(0);
     }
+
+
 }
