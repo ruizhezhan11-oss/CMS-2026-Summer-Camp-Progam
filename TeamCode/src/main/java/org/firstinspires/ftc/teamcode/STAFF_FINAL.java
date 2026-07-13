@@ -27,9 +27,8 @@ public class STAFF_FINAL extends LinearOpMode {
     double targetRPM = 3070;//Shooter固定參數
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
-    double intake1Seconds = 4;//收集球的秒數
-    double shooterAutobreak=5;
-    ElapsedTime spinUpTimer = new ElapsedTime();//自動程序計時Timer
+
+
 
     /**
      * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
@@ -94,7 +93,7 @@ public class STAFF_FINAL extends LinearOpMode {
                 telemetry.addData("Shooter目標轉速：", targetRPM);
                 telemetry.addData("Shooter1即時轉速", shooter1RPM +"RPM");
                 telemetry.addData("Shooter2及時轉速", shooter2RPM +"RPM");
-                telemetry.addData("自動連招模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
+                telemetry.addData("全馬達模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
                 telemetry.addLine("使用方法如下：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
                 // While迴圈
@@ -112,31 +111,17 @@ public class STAFF_FINAL extends LinearOpMode {
                         autoFireOn = false;   // 已經在連招中，再按一次直接關
                     } else {
                         autoFireOn = true;    // 還沒開始，按下去啟動
-                        spinUpTimer.reset();  // 重置計時器
+
                     }
                 }
 
                 if(autoFireOn){
                     //自動程序
-                    //先等待吸球
                     intake.setPower(1);
                     intake2.setPower(1);
-                    //
-                    if (spinUpTimer.seconds() < intake1Seconds) {//等待秒數
-                        intake.setPower(0);
-                        intake2.setPower(1);
-                        double ticksPerSecond = (targetRPM / 60.0) * CPR;
-                        shooter.setVelocity(ticksPerSecond);
-                        shooter2.setVelocity(ticksPerSecond);}
-                    if(spinUpTimer.seconds() > shooterAutobreak){
-                        intake.setPower(0);
-                        intake2.setPower(0);
-                        shooter.setVelocity(0);
-                        shooter2.setVelocity(0);
-                        autoFireOn = false;
-                    }
-
-
+                    double ticksPerSecond = (targetRPM / 60.0) * CPR;
+                    shooter.setVelocity(ticksPerSecond);
+                    shooter2.setVelocity(ticksPerSecond);
                 } else{
 
                     //Intake
@@ -193,14 +178,10 @@ public class STAFF_FINAL extends LinearOpMode {
                         telemetry.addLine("正常運轉中");
                     }
                 }
-
                 telemetry.update();
 
             }
-
-
-
-            }
+        }
     }
 
 
@@ -216,4 +197,5 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2.setPower(0);
         shooter.setVelocity(0);
         shooter2.setVelocity(0);
-    } }
+    }
+}
