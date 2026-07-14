@@ -9,11 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //==================================================================================//
 @TeleOp(name = "TEAM1")
 public class Team1 extends LinearOpMode {
-    private void init_hardware(){
-        DcMotor BL, BR, FL, FR;
-        DcMotor intake;
-        DcMotorEx shooter, shooter2;
-    }
     DcMotor BL;
     DcMotor BR;
     DcMotor FL;
@@ -23,8 +18,9 @@ public class Team1 extends LinearOpMode {
     DcMotorEx shooter2;
     double shooterPower = 0.4;
 
-    boolean autoFireOn = false;//自動需要
+    boolean autoFireOn = false;
     ElapsedTime spinUpTimer = new ElapsedTime();//自動程序計時Timer
+
 
     /**
      * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
@@ -36,6 +32,7 @@ public class Team1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         //hardwareMap.get
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
@@ -59,7 +56,7 @@ public class Team1 extends LinearOpMode {
 
         //吸吐球系統轉向
         intake.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setDirection(DcMotor.Direction.FORWARD);
         shooter2.setDirection(DcMotor.Direction.REVERSE);
 
         //設定模式
@@ -68,8 +65,8 @@ public class Team1 extends LinearOpMode {
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//請加裝Encoder
-        shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);//請加裝Encoder
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
         waitForStart();//Init Finish
         //Press "START"
         if (opModeIsActive()) {
@@ -77,6 +74,8 @@ public class Team1 extends LinearOpMode {
 
             //======無限迴圈======\\
             while (opModeIsActive()) {
+                telemetry.addData("及時轉速1", 6000*(shooter.getPower()));
+                telemetry.addData("及時轉速2", 6000*(shooter2.getPower()));
                 // While迴圈
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
                 FR.setPower((-gamepad1.left_stick_y - gamepad1.left_stick_x) - gamepad1.right_stick_x);
@@ -126,9 +125,9 @@ public class Team1 extends LinearOpMode {
                     if (gamepad1.xWasPressed()) {
                         stopAllMotors();
                     }
-                    telemetry.update();
 
                 }
+                telemetry.update();
             }
         }
     }
@@ -140,8 +139,8 @@ public class Team1 extends LinearOpMode {
         FR.setPower(0);
         intake.setPower(0);
 
-        shooter.setVelocity(0);
-        shooter2.setVelocity(0);
+        shooter.setPower(0);
+        shooter2.setPower(0);
     }
 
 
