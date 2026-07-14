@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 //==================================================================================//
 @TeleOp(name = "STAFF_FINAL")
@@ -16,10 +17,15 @@ public class STAFF_FINAL extends LinearOpMode {
     private DcMotor intake2;
     private DcMotorEx shooter;
     private DcMotorEx shooter2;
+
+    private Servo shooterservo;//Shooter角度控制
+    private Servo shooter2servo;
     private void init_hardware(){
         DcMotor BL, BR, FL, FR;
         DcMotor intake, intake2;
         DcMotorEx shooter, shooter2;
+        Servo shooterservo;
+        Servo shooter2servo;
     }
 
 
@@ -57,6 +63,9 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2 = hardwareMap.get(DcMotor.class, "intake2");
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
+        shooterservo = hardwareMap.get(Servo.class, "shooterservo");
+        shooter2servo = hardwareMap.get(Servo.class, "shooter2servo");
+
 
         //底盤轉向
         BL.setDirection(DcMotor.Direction.REVERSE);
@@ -75,6 +84,8 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2.setDirection(DcMotor.Direction.REVERSE);
         shooter.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setDirection(DcMotor.Direction.REVERSE);
+        shooterservo.setDirection(Servo.Direction.FORWARD);
+        shooter2servo.setDirection(Servo.Direction.FORWARD);
 
         //設定模式
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -85,6 +96,10 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
+
+        shooterservo.setPosition(0);
+        shooter2servo.setPosition(0);
+
         waitForStart();//Init Finish
         //Press "START"
         if (opModeIsActive()) {
@@ -103,6 +118,15 @@ public class STAFF_FINAL extends LinearOpMode {
                 telemetry.addData("全馬達模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
                 telemetry.addLine("使用方法如下：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
+
+                double position = shooterservo.getPosition(); //Position
+                double Maxangle =180;//最大角度
+                double Angle = (position/Maxangle)*360;//計算角度偵測
+                double thinkposition = gamepad1.right_trigger;//輸入值
+                double thinkposition2= -(gamepad1.left_trigger);//輸入反轉值
+                double positionn=thinkposition/Maxangle;//實際執行
+                telemetry.addData("servoangle",Angle +"度");//顯示
+
                 //AI協助
                 double DEADZONE = 0.05;
 
