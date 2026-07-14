@@ -19,14 +19,7 @@ public class STAFF_FINAL extends LinearOpMode {
     private DcMotorEx shooter2;
 
     private Servo shooterservo;//Shooter角度控制
-    private Servo shooter2servo;
-    private void init_hardware(){
-        DcMotor BL, BR, FL, FR;
-        DcMotor intake, intake2;
-        DcMotorEx shooter, shooter2;
-        Servo shooterservo;
-        Servo shooter2servo;
-    }
+    private Servo shooter2servo;//Shooter角度控制
 
 
     //以下變數常用
@@ -34,7 +27,7 @@ public class STAFF_FINAL extends LinearOpMode {
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
 
-    public double applyDeadzone(double value, double deadzone) {
+    public double applyDeadzone(double value, double deadzone) {           //POV:AI寫的程式
         if (Math.abs(value) < deadzone) {
             return 0.0;
         }
@@ -54,6 +47,7 @@ public class STAFF_FINAL extends LinearOpMode {
     //萬駿哥說這是簡單的程式
     @Override
     public void runOpMode() {
+        //INIT
         //hardwareMap.get
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
@@ -63,9 +57,6 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2 = hardwareMap.get(DcMotor.class, "intake2");
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
-        shooterservo = hardwareMap.get(Servo.class, "shooterservo");
-        shooter2servo = hardwareMap.get(Servo.class, "shooter2servo");
-
 
         //底盤轉向
         BL.setDirection(DcMotor.Direction.REVERSE);
@@ -84,8 +75,6 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2.setDirection(DcMotor.Direction.REVERSE);
         shooter.setDirection(DcMotor.Direction.REVERSE);
         shooter2.setDirection(DcMotor.Direction.REVERSE);
-        shooterservo.setDirection(Servo.Direction.FORWARD);
-        shooter2servo.setDirection(Servo.Direction.FORWARD);
 
         //設定模式
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -97,8 +86,6 @@ public class STAFF_FINAL extends LinearOpMode {
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
 
-        shooterservo.setPosition(0);
-        shooter2servo.setPosition(0);
 
         waitForStart();//Init Finish
         //Press "START"
@@ -108,8 +95,7 @@ public class STAFF_FINAL extends LinearOpMode {
             //======無限迴圈======\\
             while (opModeIsActive()) {
                 //Driver Hub介面顯示
-                telemetry.addLine("✅成功啟動OpMode");
-                telemetry.addLine("請注意網路為 FTC-QP3w");
+                telemetry.addLine("✅成功啟動OpMode,請注意網路為 FTC-QP3w");
                 double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
                 double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
                 telemetry.addData("🎯Shooter目標轉速：", targetRPM +"RPM");
@@ -119,20 +105,14 @@ public class STAFF_FINAL extends LinearOpMode {
                 telemetry.addLine("使用方法如下：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
 
-                double position = shooterservo.getPosition(); //Position
-                double Maxangle =180;//最大角度
-                double Angle = (position/Maxangle)*360;//計算角度偵測
-                double thinkposition = gamepad1.right_trigger;//輸入值
-                double thinkposition2= -(gamepad1.left_trigger);//輸入反轉值
-                double positionn=thinkposition/Maxangle;//實際執行
-                telemetry.addData("servoangle",Angle +"度");//顯示
 
                 //AI協助
                 double DEADZONE = 0.05;
-
                 double y  = applyDeadzone(-gamepad1.left_stick_y, DEADZONE);  // Y軸方向相反，記得加負號
                 double x  = applyDeadzone(gamepad1.left_stick_x, DEADZONE);
                 double rx = applyDeadzone(gamepad1.right_stick_x, DEADZONE);
+                //=================//
+
                 // While迴圈
                 //全向移動
                 FL.setPower(-gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x);
