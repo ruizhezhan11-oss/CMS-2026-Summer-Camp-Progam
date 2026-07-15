@@ -20,7 +20,6 @@ public class STAFF_FINAL extends LinearOpMode {
     double CPR = 28;//Shooter固定參數
     boolean autoFireOn = false;//自動需要
 
-
     //以下變數常用
     public double applyDeadzone(double value, double deadzone) {           //POV:AI寫的程式
         if (Math.abs(value) < deadzone) {
@@ -28,9 +27,7 @@ public class STAFF_FINAL extends LinearOpMode {
         }
         return value;
     }
-    //配置:詳見工筆
-    //這程式應該沒人會來看，除了驗收的學長
-    //萬駿哥說這是簡單的程式
+    //操作方式:詳見GitHub
     @Override
     public void runOpMode() {
         //INIT
@@ -48,11 +45,12 @@ public class STAFF_FINAL extends LinearOpMode {
                 double shooter1RPM = (shooter.getVelocity() / CPR) * 60.0;
                 double shooter2RPM = (shooter2.getVelocity() / CPR) * 60.0;
                 telemetry.addData("🎯Shooter目標轉速：", targetRPM +"RPM");
-                telemetry.addData("Shooter1即時轉速", shooter1RPM +"RPM");
-                telemetry.addData("Shooter2及時轉速", shooter2RPM +"RPM");
+                telemetry.addData("Shooter1即時轉速", String.format("%.2d",shooter1RPM) +"RPM");
+                telemetry.addData("Shooter2及時轉速", String.format("%.2d",shooter2RPM) +"RPM");
                 telemetry.addData("全馬達模式", autoFireOn ? "🟢 開啟" : "⚪ 關閉");
                 telemetry.addLine("使用方法如下：");
                 telemetry.addLine("按A吸球 按B射球 按X強制停止 按Y啟動Intake2 按RB自動程序");
+                telemetry.update(); //每輪迴一次迴圈刷新
                 //AI協助
                 double DEADZONE = 0.05;
                 double y  = applyDeadzone(-gamepad1.left_stick_y, DEADZONE);  // Y軸方向相反，記得加負號
@@ -133,7 +131,7 @@ public class STAFF_FINAL extends LinearOpMode {
                         telemetry.addLine("正常運轉中");
                     }
                 }
-                telemetry.update();
+
 
             }
         }
