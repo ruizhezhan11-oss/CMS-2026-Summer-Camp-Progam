@@ -3,21 +3,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 //==================================================================================//
 @TeleOp(name = "STAFF_FINAL", group = "SummerCamp")
 public class STAFF_FINAL extends LinearOpMode {
-    private DcMotor BL;
-    private DcMotor BR;
-    private DcMotor FL;
-    private DcMotor FR;
-    private DcMotor intake;
-    private DcMotor intake2;
-    private DcMotorEx shooter;
-    private DcMotorEx shooter2;
-    private Servo servo;
-    private Servo servoservo;
+    private DcMotor BL,BR,FL,FR,intake,intake2;
+    private DcMotorEx shooter,shooter2;
+    private Servo servo,servoservo;
 
     private Servo shooterservo;//Shooter角度控制
     private Servo shooter2servo;//Shooter角度控制
@@ -28,21 +22,12 @@ public class STAFF_FINAL extends LinearOpMode {
 
 
     //以下變數常用
-
-
     public double applyDeadzone(double value, double deadzone) {           //POV:AI寫的程式
         if (Math.abs(value) < deadzone) {
             return 0.0;
         }
         return value;
     }
-    /**
-     * This sample contains the bare minimum Blocks for any regular OpMode. The 3 blue
-     * Comment Blocks show where to place Initialization code (runs once, after touching the
-     * DS INIT button, and before touching the DS Start arrow), Run code (runs once, after
-     * touching Start), and Loop code (runs repeatedly while the OpMode is active, namely not
-     * Stopped).
-     */
     //配置:詳見工筆
     //這程式應該沒人會來看，除了驗收的學長
     //萬駿哥說這是簡單的程式
@@ -87,8 +72,7 @@ public class STAFF_FINAL extends LinearOpMode {
                     if (autoFireOn) {
                         autoFireOn = false;   // 已經在連招中，再按一次直接關
                     } else {
-                        autoFireOn = true;    // 還沒開始，按下去啟動
-
+                        autoFireOn = true;  // 還沒開始，按下去啟動
                     }
                 }
 
@@ -117,28 +101,20 @@ public class STAFF_FINAL extends LinearOpMode {
                     }else{
                         intake2.setPower(0);
                     }
-                    //Shooter1
+                    //Shooter
                     if(gamepad1.b){
                         double ticksPerSecond = (targetRPM / 60.0) * CPR;
                         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         shooter.setVelocity(ticksPerSecond);
-
-
-
-                    }else {
-                        shooter.setVelocity(0);
-                    }
-
-                    //shooter2
-                    if(gamepad1.b){
-                        double ticksPerSecond = (targetRPM / 60.0) * CPR;
                         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         shooter2.setVelocity(ticksPerSecond);
-
-                    }else{
-                        shooter2.setVelocity(0);
+                    }else {
                         shooter.setVelocity(0);
+                        shooter2.setVelocity(0);
                     }
+
+
+
                     boolean XPressed = gamepad1.xWasPressed();
                     //按X強制停止
                     if (gamepad1.xWasPressed()) {
@@ -183,12 +159,14 @@ public class STAFF_FINAL extends LinearOpMode {
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //吸吐球系統轉向
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        intake2.setDirection(DcMotor.Direction.REVERSE);
-        shooter.setDirection(DcMotor.Direction.REVERSE);
-        shooter2.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //設定模式
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -199,7 +177,6 @@ public class STAFF_FINAL extends LinearOpMode {
         intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);//請加裝Encoder
-        //Init Finish
     }
 
     /// Stop all motors
